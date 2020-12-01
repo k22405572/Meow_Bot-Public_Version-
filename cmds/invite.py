@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import os
 import asyncio
 from core.classes import Cog_Extension
 

@@ -11,6 +11,9 @@ import requests
 #os.system('pip install opencc-python-reimplemented')
 #os.system('pip install --upgrade discord.py')
 
+keeptime = 10
+keepstatus = 1
+
 intents = discord.Intents.all()
 
 with open('setting.json', 'r', encoding='utf8') as jfile:
@@ -23,9 +26,15 @@ async def on_ready():
     bot.unload_extension(F'cmds.test')
     print(">> 目前版本：v2.2.8 <<")
     print(">> Meow_Bot is online <<")
+    #while(1):
+    #  requests.get("https://friendbot.meowxiaoxiang.repl.co")
+    #  await asyncio.sleep(60)
     while(1):
-      requests.get("https://friendbot.meowxiaoxiang.repl.co")
-      await asyncio.sleep(80)
+        await asyncio.sleep(keeptime)
+        #print(str(keepstatus))
+        if keepstatus == 1:
+            requests.get("http://127.0.0.1:8080/")
+
 #----------------------------------------------------------------------------
 bot.remove_command('help')
 #help指令
@@ -41,8 +50,11 @@ async def help(ctx):
     +str(jdata['command_prefix'])+'offline 顯示離線名單\n'
     +str(jdata['command_prefix'])+'picture 隨機發送一張圖片\n'
     +str(jdata['command_prefix'])+'ms 踩地雷\n'
-    +str(jdata['command_prefix'])+'sortie 顯示今日Warframe的突擊\n'
-    +str(jdata['command_prefix'])+'worldstate 顯示Warframe各個世界時間(包含開放世界和地球)\n'
+    +str(jdata['command_prefix'])+'sortie 突擊信息\n'
+    +str(jdata['command_prefix'])+'POE 夜靈平原時間\n'
+    +str(jdata['command_prefix'])+'Cambion 魔裔禁地時間\n'
+    +str(jdata['command_prefix'])+'Orb 奧布山谷時間\n'
+    +str(jdata['command_prefix'])+'Earth 地球時間\n'
     +str(jdata['command_prefix'])+'calc [數學算式]簡易的四則運算(支援: + - * / ( ) 小數 科學記號e=10^)中間不能有空格 不支援指數運算 \n'
     +str(jdata['command_prefix'])+'alias 顯示各個指令的別名\n'
     +str(jdata['command_prefix'])+'user 顯示個人訊息\n```僅限管理員的功能：\n```css\n'
@@ -64,7 +76,10 @@ async def alias(ctx):
     +str(jdata['command_prefix'])+'picture：[pic , 圖片]\n'
     +str(jdata['command_prefix'])+'ms：[踩地雷]\n'
     +str(jdata['command_prefix'])+'sortie：[突擊 , 突襲]\n'
-    +str(jdata['command_prefix'])+'worldstate [開放世界時間 , 平原時間 , WF時間 , openworldstate]\n'
+    +str(jdata['command_prefix'])+'POE：[夜靈平原時間 , 希圖斯時間 , 希圖斯]\n'
+    +str(jdata['command_prefix'])+'Cambion：[魔裔禁地時間 , 火衛二 , 火衛二時間]\n'
+    +str(jdata['command_prefix'])+'Orb：[奧布山谷時間 , 福爾圖娜 , 福爾圖娜時間]\n'
+    +str(jdata['command_prefix'])+'Earth：[地球時間 , 地球]\n'
     +str(jdata['command_prefix'])+'calc：[計算機 , 計算]\n'
     +str(jdata['command_prefix'])+'user：[使用者資訊 , 用戶資訊]\n'
     +str(jdata['command_prefix'])+'clear：[clean , 清除]\n```')
@@ -96,7 +111,6 @@ async def listmodel(ctx):
   await ctx.send(f'```ini\n此機器人目前擁有的所有模組：\n{msg}```')
 
 
-
 @bot.command(name= 'load', aliases=['載入' , '載入模組' , '啟用'])
 async def load(ctx, *value):
   if ctx.author.id == jdata['owner']:
@@ -112,7 +126,6 @@ async def load(ctx, *value):
         await ctx.send("錯誤：組件載入失敗")
   else:
       await ctx.send("此功能只能給機器人擁有者使用！")
-
 
 
 @bot.command(name= 'unload', aliases=['卸載' , '卸載模組' , '停用'])
@@ -148,6 +161,24 @@ async def reload(ctx, *value):
   else:
       await ctx.send("此功能只能給機器人擁有者使用！")
 
+@bot.command()
+async def keep(ctx,type,index):
+    global keepstatus,keeptime
+    if type == 'status':
+        if index == '1':
+            print('已啟用保持連線')
+        elif index == '0':
+            print('已關閉保持連線')
+        else:
+            print('請輸入1或0')
+            return
+        keepstatus = int(index)
+    if type == 'time':
+        if index.isdigit():
+            keeptime = int(index)
+        else:
+            print('請輸入數字')
+
 #機器人關閉系統--------------------------------------------   
 
 @bot.command(name= 'disconnect', aliases=['disable' , 'shutdown' , '關閉機器人' , '關機' , '關閉'])
@@ -158,7 +189,11 @@ async def turn_off_bot(ctx):
     await bot.close()
   else:
     await ctx.send('權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]')
-    
+
+@bot.event
+async def on_disconnect():
+    requests.get("http://127.0.0.1:8080/")
+    print('機器人已關閉')
 #--------------------------------
 
 for filename in os.listdir('./cmds'):

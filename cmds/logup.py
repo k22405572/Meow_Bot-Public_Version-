@@ -4,6 +4,7 @@ from core.classes import Cog_Extension
 import os
 import json
 import asyncio
+
 with open('setting.json','r',encoding='utf8') as jset:
     jdata = json.load(jset)
 

@@ -3,39 +3,11 @@ from core.classes import Cog_Extension
 import random
 import json
 from random import randint
-import requests
-import opencc
 
 
 with open('setting.json', 'r', encoding='utf8') as jfile:
     jdata = json.load(jfile)
 
-try:
-  html_eidolon = requests.get('https://api.warframestat.us/pc/cetusCycle')
-  if html_eidolon.status_code != 200:
-    print("API出錯！")
-  else:
-    data_eidolon = json.loads(html_eidolon.text)
-  #-------------------------------------------------------------------------
-  html_vallis = requests.get('https://api.warframestat.us/pc/vallisCycle')
-  if html_vallis.status_code != 200:
-    print("API出錯！")
-  else:
-    data_vallis = json.loads(html_vallis.text)
-  #-------------------------------------------------------------------------
-  html_earth = requests.get('https://api.warframestat.us/pc/tc/earthCycle')
-  if html_vallis.status_code != 200:
-    print("API出錯！")
-  else:
-    data_earth = json.loads(html_earth.text)
-  #-------------------------------------------------------------------------
-  html_cambion = requests.get('https://api.warframestat.us/pc/cambionCycle')
-  if html_vallis.status_code != 200:
-    print("API出錯！")
-  else:
-    data_cambion = json.loads(html_cambion.text)
-except:
-  print("來源失效")
 
 class Common(Cog_Extension):
     #ping
@@ -131,55 +103,13 @@ class Common(Cog_Extension):
             user1 = str(user[1]).split('>')
             user2 = self.bot.get_user(int(user1[0]))
             await user2.send(msg)
+
     #環形裝置
     @commands.command()
     async def 環形裝置(self,ctx):
       await ctx.send(f'```維加環形裝置→太空站          & 微蟎蛛型機\n告達環形裝置→昇華實驗室      & 賽托蛛型機(瓦內蜘蛛)\n索拉環形裝置→潤盈寺          & 凱塔蛛型機\n聖油環形裝置→利潤收割者圓蛛\n天藍環形裝置→剝削者圓蛛```')
-    #香蕉君
-    @commands.command(name= 'Milos', aliases=['香蕉君' , '象徵自由的男人'])
-    async def Milos(self,ctx):
-      #await ctx.channel.purge(limit=1)
-      await ctx.send(self.bot.get_emoji(int(710157217948631085)))
-    #突擊
-    @commands.command(name='Sortie',aliases=['突擊' , '突襲'])
-    async def sortie(self,ctx):
-      try:
-        cc = opencc.OpenCC('s2t')
-        count = 1
-        html_sortie = requests.get('https://api.warframestat.us/pc/zh/sortie',headers={'Accept-Language':'tc'})
-        data_sortie = json.loads(html_sortie.text)
-        await ctx.send(f"```fix\n突擊剩餘時間：{data_sortie['eta']}\n{data_sortie['boss']} 的部隊，{data_sortie['faction']}陣營```")
-        for missions in data_sortie['variants']:
-          node = cc.convert(missions['node'])
-          missionType= cc.convert(missions['missionType'])
-          modifier = cc.convert(missions['modifier'])
-          await ctx.send(f'```ini\n突擊 [{count}]\n節點：{node} 等級：[{35+15*count} ~ {40+20*count}]\n任務：{missionType}\n狀態：{modifier}```')
-          count += 1
-      except:
-        await ctx.send("該功能目前無法使用")
 
-    @commands.command(name='worldstate',aliases=['開放世界時間' , '平原時間' , 'WF時間' , 'openworldstate'])
-    async def WFworldtime(self,ctx):
-      try:
-        if (data_eidolon["state"]=="day"):
-          await ctx.send("距離[夜靈平原]晚上還有：" + data_eidolon["timeLeft"])
-        elif (data_eidolon["state"]=="night"):
-          await ctx.send("距離[夜靈平原]早上還有：" + data_eidolon["timeLeft"])
-        if (data_earth["state"]=="day"):
-          await ctx.send("距離[地球Earth]晚上還有：" + data_earth["timeLeft"])
-        elif (data_earth["state"]=="night"):
-          await ctx.send("距離[地球Earth]早上還有：" + data_earth["timeLeft"])
-        if (data_vallis["state"]=="warm"):
-          await ctx.send("距離[奧布山谷]寒冷還有：" + data_vallis["timeLeft"])
-        elif (data_vallis["state"]=="cold"):
-          await ctx.send("距離[奧布山谷]溫暖還有：" + data_vallis["timeLeft"])
-        if (data_cambion["active"]=="fass"):
-          await ctx.send("距離[魔裔禁地]Vome還有：" + data_eidolon["timeLeft"])
-        elif (data_cambion["active"]=="vome"):
-          await ctx.send("距離[魔裔禁地]Fass還有：" + data_eidolon["timeLeft"])
-      except:
-        await ctx.send("該功能目前無法使用")
-   
+    #踩地雷   
     @commands.command(name='ms', aliases=['踩地雷'])
     async def minesweeper(self, ctx, width: int = 10, height: int = 10, difficulty: int = 30):
       grid = tuple([['' for i in range(width)] for j in range(height)])
