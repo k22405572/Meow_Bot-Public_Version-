@@ -9,7 +9,6 @@ import requests
 
 
 #os.system('pip install --upgrade pip')
-#os.system('pip install opencc-python-reimplemented')
 #os.system('pip install --upgrade discord.py')
 
 keeptime = 30
@@ -25,8 +24,8 @@ bot = commands.Bot(command_prefix='-',intents = intents)
 @bot.event
 async def on_ready():
     bot.unload_extension(F'cmds.test')
-    print(">> 目前版本：v2.3.0 <<")
-    print(">> Meow_Bot is online <<")
+    print(">> 目前版本：v2.3.1 <<")
+    print(">> Bot is online   <<")
     while(1):
         await asyncio.sleep(keeptime)
         #print(str(keepstatus))
@@ -49,14 +48,19 @@ async def help(ctx):
     +str(jdata['command_prefix'])+'alias 顯示各個指令的別名\n'
     +str(jdata['command_prefix'])+'user 顯示個人訊息\n'
     +'```'
+    #--------------------遊戲類------------------------------
+    +'遊戲類：\n```css\n'
+    +str(jdata['command_prefix'])+'ms 踩地雷\n'
+    +'```'
     #--------------------WARFRAME-----------------------------
     +'WARFRAME：\n```css\n'
     +str(jdata['command_prefix'])+'ccc [基礎近戰暴率 連擊數 額外暴率加成] 計算近戰塞急進猛突暴率\n'
     +str(jdata['command_prefix'])+'wws [基礎近戰觸發 連擊數 額外觸發加成] 計算近戰塞創口潰爛觸發\n'
     +str(jdata['command_prefix'])+'baro 查詢虛空商人剩餘時間或商品\n'
     +str(jdata['command_prefix'])+'riven 查詢Warframe.Market上的紫卡價格\n'
+    +str(jdata['command_prefix'])+'wfm 查詢Warframe.Market上的物品價格\n'
     +str(jdata['command_prefix'])+'sortie 突擊信息\n'
-    +'------------開放世界時間----------------'
+    +'------------開放世界時間----------------\n'
     +str(jdata['command_prefix'])+'POE 夜靈平原時間\n'
     +str(jdata['command_prefix'])+'Cambion 魔裔禁地時間\n'
     +str(jdata['command_prefix'])+'Orb 奧布山谷時間\n'
@@ -79,8 +83,11 @@ async def alias(ctx):
     +str(jdata['command_prefix'])+'member [顯示成員 , 成員]\n'
     +str(jdata['command_prefix'])+'online [顯示上線成員 , 上線 , 在線]\n'
     +str(jdata['command_prefix'])+'offline [顯示下線成員 , 下線 , 顯示離線成員 , 離線]\n'
+    +str(jdata['command_prefix'])+'picture：[pic , 圖片]\n'
+    +str(jdata['command_prefix'])+'ms：[踩地雷]\n'
     +str(jdata['command_prefix'])+'baro [奸商 , Baro]\n'
     +str(jdata['command_prefix'])+'riven [紫卡 , 紫卡查詢]\n'
+    +str(jdata['command_prefix'])+'wfm [wm , 市場查詢]\n'
     +str(jdata['command_prefix'])+'sortie：[突擊 , 突襲]\n'
     +str(jdata['command_prefix'])+'POE：[夜靈平原時間 , 希圖斯時間 , 希圖斯]\n'
     +str(jdata['command_prefix'])+'Cambion：[魔裔禁地時間 , 火衛二 , 火衛二時間]\n'
@@ -130,7 +137,7 @@ async def load(ctx, extension:str ='Null'):
       except:
         await ctx.send("錯誤：組件載入失敗")
   else:
-      await ctx.send('權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]')
+      await ctx.send(InsufficientPermissions())
 
 
 @bot.command(name= 'unload', aliases=['卸載' , '卸載模組' , '停用'])
@@ -146,10 +153,10 @@ async def unload(ctx, extension:str='Null'):
       except:
         await ctx.send("錯誤：組件卸載失敗")
   else:
-      await ctx.send('權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]')
+      await ctx.send(InsufficientPermissions())
 
 
-@bot.command(name= 'reload', aliases=['重載' , '重載模組' , '重新載入模組', '重新加載', '重啟'])
+@bot.command(name= 'reload', aliases=['重載' , '重載模組' , '重新載入模組', '重新加載', '重啟' , '重新載入'])
 async def reload(ctx, extension:str ='Null'):
   if ctx.author.id == jdata['owner']:
     if extension == 'Null':
@@ -162,7 +169,7 @@ async def reload(ctx, extension:str ='Null'):
       except:
         await ctx.send("錯誤：組件重新載入失敗")
   else:
-      await ctx.send('權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]')
+      await ctx.send(InsufficientPermissions())
 
 
 @bot.command()
@@ -202,7 +209,7 @@ async def on_disconnect():
 
 class InsufficientPermissions(Exception):
   def __str__(self):
-    return '權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]'
+    return f'權限不足 本指令只提供給機器人擁有者 \n擁有者為 <@{jdata["owner"]}> '
 class NullMod(Exception):
   def __str__(self):
     return '此處不可為空 請輸入組件名稱'

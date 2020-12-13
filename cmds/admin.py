@@ -14,13 +14,17 @@ class admin(Cog_Extension):
       if num == 0:
         await ctx.send(jdata["command_prefix"] + "clear [num] 要刪除的量(行)")
       else:
-        if ctx.message.author.id == ctx.guild.owner_id:
-            await ctx.channel.purge(limit=int(num)+1)
-            print(str(ctx.message.author)+' ---ID '+str(ctx.message.author.id)+'在 << '+str(ctx.channel.name)+' >> 頻道使用了clear指令刪除了'+str(num)+'個對話')
-            if int(num)>=10:
-              await ctx.send('https://tenor.com/view/explode-blast-blow-nuclear-boom-gif-15025770')
-        else:
-            await ctx.send('權限不足 本指令只提供給伺服器傭有者 \n本伺服器擁有者為 <@' + str(ctx.guild.owner_id) + '>')
+        try:
+          if ctx.message.author.id == ctx.guild.owner_id:
+              await ctx.channel.purge(limit=int(num)+1)
+              print(str(ctx.message.author)+' ---ID '+str(ctx.message.author.id)+'在 << '+str(ctx.channel.name)+' >> 頻道使用了clear指令刪除了'+str(num)+'個對話')
+              if int(num)>=10:
+                await ctx.send('https://tenor.com/view/explode-blast-blow-nuclear-boom-gif-15025770')
+          else:
+              await ctx.send(admin.InsufficientPermissions())
+        except:
+          await ctx.send('請勿在私人頻道使用此功能')
+          print('請勿在私人頻道使用這功能')
 
     @commands.command(name= 'sendch', aliases=['發送至頻道'])
     async def sendch(self,ctx,chid,*,msg):
@@ -28,7 +32,7 @@ class admin(Cog_Extension):
             ch = self.bot.get_channel(int(chid))
             await ch.send(msg)
         else:
-            await ctx.send('權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]')
+            await ctx.send(admin.InsufficientPermissions())
             
     
     @commands.command(name= 'send', aliases=['私訊'])
@@ -46,7 +50,7 @@ class admin(Cog_Extension):
                 user2 = self.bot.get_user(int(user1[0]))
                 await user2.send(msg)
         else:
-            await ctx.send('權限不足 本指令只提供給Meow_Bot擁有者 \n擁有者為 <@436866339731275787> [小翔]')
+            await ctx.send(admin.InsufficientPermissions())
     
     @commands.command(name='cmd', aliases=['終端機'])
     async def cmd(self,ctx,*,cmd):
@@ -55,8 +59,11 @@ class admin(Cog_Extension):
         print(type(ctx.author.id))
         print(type(jdata['owner']))
         '''
-        if ctx.author.id == jdata['owner']:
-            os.system(cmd)
+        os.system(cmd)
+
+    class InsufficientPermissions(Exception):
+        def __str__(self):
+            return f'權限不足 本指令只提供給機器人擁有者 \n擁有者為 <@{jdata["owner"]}> '
 
 
 def setup(bot):

@@ -4,7 +4,7 @@ import requests
 import json
 import chinese_converter
 
-rawDict = requests.get("[baro 商品資料來源]")
+rawDict = requests.get("https://raw.githubusercontent.com/lonnstyle/riven-mirror/dev/src/i18n/lang/zh-Hant.json")
 Dict = json.loads(rawDict.text)
 Dict = Dict['messages']
 
