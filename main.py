@@ -7,6 +7,7 @@ from datetime import datetime,timedelta
 import asyncio
 import requests
 
+
 #os.system('pip install --upgrade pip')
 #os.system('pip install --upgrade discord.py')
 
@@ -142,4 +143,3 @@ for filename in os.listdir('./cmds'):
 if __name__ == "__main__":
     keep_alive.keep_alive()
     bot.run(jdata['TOKEN'])
-    #bot.run(jdata['TOKEN_CRAB'])
