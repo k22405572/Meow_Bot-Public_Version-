@@ -63,14 +63,14 @@ class rivenPrice(Cog_Extension):
       rivenData = rivenData['payload']
       rivenData = rivenData['auctions']
       count = 0
-      message = f'以下為{Chinese}紫卡的查詢結果（按價格由低至高順序）\n'
+      message = f'以下為{Chinese}紫卡的查詢結果（按價格由低至高順序）\n>>> '
       for items in rivenData:
         if count < 3:
           owner = items['owner']
           if owner['status'] != 'offline':
             rivenItem = items['item']
             rivenName = rivenItem['name']
-            message += f'```\n紫卡名稱:{Chinese} {rivenName}\n'
+            message += f'```diff\n紫卡名稱:{Chinese} {rivenName}\n'
             ownerName = owner['ingame_name']
             message += f'賣家:{ownerName}\n'
             rank = rivenItem['mod_rank']
@@ -82,9 +82,9 @@ class rivenPrice(Cog_Extension):
               attribute = attrDict.get(attribute,attribute)
               value = attr['value']
               if attr['positive'] == True:
-                message += f'正面詞條:{attribute} {value}\n'
+                message += f'+正面詞條:{attribute} {value}\n'
               elif attr['positive'] == False:
-                message += f'負面詞條:{attribute} {value}\n'
+                message += f'-負面詞條:{attribute} {value}\n'
             if items['top_bid'] == 'None':
               top_bid = items['top_bid']
               message += f'目前競標:{top_bid}\n'
